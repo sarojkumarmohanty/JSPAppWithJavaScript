@@ -24,7 +24,7 @@ import tech.csm.entity.Country;
 import tech.csm.entity.State;
 import tech.csm.entity.StudentInfo;
 import tech.csm.util.HibernateUtil;
-
+//this is the front controller
 @WebServlet("/")
 public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
