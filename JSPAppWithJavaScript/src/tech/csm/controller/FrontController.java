@@ -32,6 +32,7 @@ public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Session session;
 
+	
 	@Override
 	public void init() throws ServletException {
 		session = HibernateUtil.getSession();
