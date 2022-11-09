@@ -209,16 +209,7 @@
 					<input type="submit" value="Search" class="form-control btn btn-success">
 			</div>	
 		</div>
-	
-	
-	
-	
 	</form>
-	
-	
-
-
-
 	<div class="h3">Student List</div>
 	<table class="table table-bordered" id="student_data">
 		<thead>
@@ -330,10 +321,6 @@
 				$("#cityId").html(result);
 			}
 		});
-
-
-
-
 		}
 	
 
