@@ -38,6 +38,9 @@ public class Address implements Serializable {
 	@JoinColumn(name="state_id")
 	private State state;
 	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="city_id")
+	private City city;
 	
 	private String address;
 }

@@ -6,6 +6,7 @@ import org.hibernate.cfg.Configuration;
 
 import tech.csm.entity.Address;
 import tech.csm.entity.BranchInfo;
+import tech.csm.entity.City;
 import tech.csm.entity.Country;
 import tech.csm.entity.State;
 import tech.csm.entity.StudentInfo;
@@ -21,6 +22,7 @@ public class HibernateUtil {
 		cfg.addAnnotatedClass(Country.class);
 		cfg.addAnnotatedClass(State.class);
 		cfg.addAnnotatedClass(Address.class);
+		cfg.addAnnotatedClass(City.class);
 		SessionFactory sessionFactory=cfg.buildSessionFactory();
 		session=sessionFactory.openSession();
 	}

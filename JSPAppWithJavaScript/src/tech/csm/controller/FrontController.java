@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -20,6 +21,7 @@ import org.hibernate.query.Query;
 
 import tech.csm.entity.Address;
 import tech.csm.entity.BranchInfo;
+import tech.csm.entity.City;
 import tech.csm.entity.Country;
 import tech.csm.entity.State;
 import tech.csm.entity.StudentInfo;
@@ -53,16 +55,41 @@ public class FrontController extends HttpServlet {
 			RequestDispatcher rd = req.getRequestDispatcher("student_form.jsp");
 			rd.forward(req, resp);
 
-		} else if (endPoint.equals("/savestudent")) {
+		}else if(endPoint.equals("/dateFilter")){
+			Date fd=null,td=null;
+			try {
+				fd=new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("fdate"));
+				td=new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("tdate"));
+
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			Query<StudentInfo> seQueryFilter=session.createQuery("from StudentInfo where dob between ?1 and ?2");
+			seQueryFilter.setParameter(1, fd);
+			seQueryFilter.setParameter(2, td);
+			req.setAttribute("studentList", seQueryFilter.list());
+			Query<BranchInfo> seQueryBranch = session.createQuery("from BranchInfo");
+			req.setAttribute("branchList", seQueryBranch.list());
+			Query<Country> seQueryCountry = session.createQuery("from Country");
+			req.setAttribute("countryList", seQueryCountry.list());
+			
+			RequestDispatcher rd = req.getRequestDispatcher("student_form.jsp");
+			rd.forward(req, resp);
+			
+		}else if (endPoint.equals("/savestudent")) {
 
 			Address address = new Address();
 
 			address.setCountry(session.get(Country.class, Integer.parseInt(req.getParameter("country"))));
 			address.setState(session.get(State.class, Integer.parseInt(req.getParameter("state"))));
+			address.setCity(session.get(City.class, Integer.parseInt(req.getParameter("city"))));
+			
 			address.setAddress(req.getParameter("addressl"));
 			StudentInfo st = new StudentInfo();
-			if (!req.getParameter("rollNo").equals(""))
+			if (!req.getParameter("rollNo").equals("")) {
 				st.setRollNo(Integer.parseInt(req.getParameter("rollNo")));
+				address.setAddressId(session.get(StudentInfo.class,Integer.parseInt(req.getParameter("rollNo"))).getAddress().getAddressId());
+			}
 			st.setName(req.getParameter("name"));
 			st.setPhoneNo(req.getParameter("phone"));
 			st.setEmail(req.getParameter("email"));
@@ -107,7 +134,19 @@ public class FrontController extends HttpServlet {
 				sop += "<option value='" + s.getStateId() + "'>" + s.getStateName() + "</option>";
 			pw.println(sop);
 
-		} else if (endPoint.equals("/getFeeByBranchId")) {
+		}else if(endPoint.equals("/getCities")) {
+			Integer sId = Integer.parseInt(req.getParameter("stateId"));
+			Query<City> seQueryCity = session.createQuery("from City where state.stateId=?1");
+			seQueryCity.setParameter(1, sId);
+			List<City> cityList = seQueryCity.list();
+			String sop = "<option value='0'>-select-</option>";
+			for (City c : cityList)
+				sop += "<option value='" + c.getCityId() + "'>" + c.getCityName() + "</option>";
+			pw.println(sop);
+			
+			
+			
+		}else if (endPoint.equals("/getFeeByBranchId")) {
 			BranchInfo bInfo = session.get(BranchInfo.class, Integer.parseInt(req.getParameter("branchId")));
 			pw.println(bInfo.getFees());
 
@@ -123,9 +162,17 @@ public class FrontController extends HttpServlet {
 		} else if (endPoint.equals("/updatestudent")) {
 			StudentInfo stud = session.get(StudentInfo.class, Integer.parseInt(req.getParameter("rollNo")));
 			req.setAttribute("ustud", stud);
+			
 			Query<State> seQueryState = session.createQuery("from State where country.countryId=?1");
-			seQueryState.setParameter(1, stud.getAddress().getCountry().getCountryId());
+			seQueryState.setParameter(1, stud.getAddress().getCountry().getCountryId());			
 			req.setAttribute("uStateList", seQueryState.list());
+			
+			Query<City> seQueryCity = session.createQuery("from City where state.stateId=?1");
+			seQueryCity.setParameter(1, stud.getAddress().getState().getStateId());			
+			req.setAttribute("uCityList", seQueryCity.list());
+			
+			
+			
 			List<State> stateList = seQueryState.list();
 
 			req.getRequestDispatcher("/getRegdForm").forward(req, resp);

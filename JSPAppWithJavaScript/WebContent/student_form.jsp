@@ -26,9 +26,10 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 <link rel="stylesheet" type="text/css"
-	href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css"/>
+	href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css" />
 
-<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 
 </head>
 <body>
@@ -40,17 +41,13 @@
 				<c:remove var="msg" scope="session" />
 			</c:if>
 		</div>
-		<!-- <p class="text-right">
-			<a
-				href="http://localhost:8080/StudentAddmissionHibernateDemo/viewallstudents">View
-				All Students</a>
-		</p> -->
+		
 		<h3 class="text-primary">Student Regd. Form</h3>
 		<form class="form-group" method="post" action="./savestudent"
 			id="regdform" onsubmit="return validateRegdForm();">
-			
+
 			<input type="hidden" name="rollNo" value="${ustud.rollNo}">
-			
+
 			<div class="row">
 				<div class="col-md-4">
 					<lable class="text-warning font-weight-bold">Name<sup
@@ -124,13 +121,20 @@
 				<div class="col-md-4">
 
 					<c:set var="intr" value="${ustud.interestArea}" />
-					<c:set var="splitName" value="${fn:split(intr,', ')}" />					
+					<c:set var="splitName" value="${fn:split(intr,', ')}" />
 					<div>
 						<lable class="text-warning font-weight-bold">Interest Area</lable>
 					</div>
-					<input type="checkbox" name="interestArea" id="interestAreaId" value="art" <c:forEach var="name" items="${splitName}"><c:if test="${name eq 'art'}">checked='checked'</c:if></c:forEach>> Art 
-					<input type="checkbox" name="interestArea" id="interestAreaId" value="science" <c:forEach var="name1" items="${splitName}"><c:if test="${name1 eq 'science'}">checked='checked'</c:if></c:forEach>>Science
-					<input type="checkbox" name="interestArea" id="interestAreaId" value="literature" <c:forEach var="name2" items="${splitName}"><c:if test="${name2 eq 'literature'}">checked='checked'</c:if></c:forEach>> literature
+					<input type="checkbox" name="interestArea" id="interestAreaId"
+						value="art"
+						<c:forEach var="name" items="${splitName}"><c:if test="${name eq 'art'}">checked='checked'</c:if></c:forEach>>
+					Art <input type="checkbox" name="interestArea" id="interestAreaId"
+						value="science"
+						<c:forEach var="name1" items="${splitName}"><c:if test="${name1 eq 'science'}">checked='checked'</c:if></c:forEach>>Science
+					<input type="checkbox" name="interestArea" id="interestAreaId"
+						value="literature"
+						<c:forEach var="name2" items="${splitName}"><c:if test="${name2 eq 'literature'}">checked='checked'</c:if></c:forEach>>
+					literature
 				</div>
 			</div>
 
@@ -141,104 +145,138 @@
 					<select class="form-control" name="country" id="countryId"
 						onchange="getStates()">
 						<option value="0">-select-</option>
-						
+
 						<c:forEach items="${countryList}" var="con">
-							<option value="${con.countryId}" <c:if test="${con.countryId eq ustud.address.country.countryId}">selected="selected"</c:if> >${con.countryName}</option>
+							<option value="${con.countryId}"
+								<c:if test="${con.countryId eq ustud.address.country.countryId}">selected="selected"</c:if>>${con.countryName}</option>
 						</c:forEach>
 					</select>
 				</div>
 				<div class="col-md-4">
 					<lable class="text-warning font-weight-bold">State</lable>
-					<select class="form-control" name="state" id="stateId">
+					<select class="form-control" name="state" id="stateId" onchange="getCities()">
 						<option value="0">-select-</option>
 						<c:if test="${ustud ne null}">
-							<c:forEach var="st" items="${uStateList}"> 							
-								<option value="${st.stateId}" <c:if test="${st.stateId eq ustud.address.state.stateId}">selected="selected"</c:if>>${st.stateName}</option>
-							</c:forEach>							
+							<c:forEach var="st" items="${uStateList}">
+								<option value="${st.stateId}"
+									<c:if test="${st.stateId eq ustud.address.state.stateId}">selected="selected"</c:if>>${st.stateName}</option>
+							</c:forEach>
 						</c:if>
 					</select>
 				</div>
 				<div class="col-md-4">
+					<lable class="text-warning font-weight-bold">City</lable>
+					<select class="form-control" name="city" id="cityId">
+						<option value="0">-select-</option>
+						<c:if test="${ustud ne null}">
+							<c:forEach var="ct" items="${uCityList}">
+								<option value="${ct.cityId}"
+									<c:if test="${ct.cityId eq ustud.address.city.cityId}">selected="selected"</c:if>>${ct.cityName}</option>
+							</c:forEach>
+						</c:if>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4">
 					<lable class="text-warning font-weight-bold">Address</lable>
 					<textarea name="addressl" id="addresslId" rows="2" cols="15"
-						class="form-control" >${ustud.address.address}</textarea>
+						class="form-control">${ustud.address.address}</textarea>
 				</div>
-
 			</div>
-
-
+	
 			<div class="text-center mt-3">
-
-
-				<input type="submit" value=${ustud ne null ?'Update':'Save'} name="collegeName"
-					id="collegeNameId" class="btn btn-success">
-				<input  class="btn btn-warning" type="reset" value="Reset">
-				
+				<input type="submit" value=${ustud ne null ?'Update':'Save'}
+					name="collegeName" id="collegeNameId" class="btn btn-success">
+				<input class="btn btn-warning" type="reset" value="Reset">
 			</div>
-		</form>
+	</form>
 
 
-		<div class="h3">Student List</div>
-		<table class="table table-striped table-bordered" id="student_data">
-			<thead>
+	<form action="./dateFilter">
+	
+		<div class="row my-5">
+			<div class="col-md-4">
+				<lable class="text-warning font-weight-bold">From Date</lable>
+					<input type="text" name="fdate" id="fdateId" class="form-control dp">
+			</div>	
+			<div class="col-md-4">
+				<lable class="text-warning font-weight-bold">To Date</lable>
+					<input type="text" name="tdate" id="tdateId" class="form-control dp">
+			</div>
+			<div class="col-md-2">
+					<label></label>
+					<input type="submit" value="Search" class="form-control btn btn-success">
+			</div>	
+		</div>
+	
+	
+	
+	
+	</form>
+	
+	
+
+
+
+	<div class="h3">Student List</div>
+	<table class="table table-bordered" id="student_data">
+		<thead>
+			<tr>
+				<th>Sl#</th>
+				<th>Roll No</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Phone</th>
+				<th>College</th>
+				<th>Branch</th>
+				<th>Cgpa</th>
+				<th>Dob</th>
+				<th>Type</th>
+				<th>Interests</th>
+				<th>Address</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			<c:forEach var="stud" items="${studentList}" varStatus="counter">
 				<tr>
-					<th>Sl#</th>
-					<th>Roll No</th>
-					<th>Name</th>
-					<th>Email</th>
-					<th>Phone</th>
-					<th>College</th>
-					<th>Branch</th>
-					<th>Cgpa</th>
-					<th>Dob</th>
-					<th>Type</th>
-					<th>Interests</th>
-					<th>Address</th>
-					<th>Action</th>
+					<td>${counter.count}</td>
+					<td>${stud.rollNo}</td>
+					<td>${stud.name}</td>
+					<td>${stud.email}</td>
+					<td>${stud.phoneNo}</td>
+					<td>${stud.collegeName}</td>
+					<td>${stud.branch.branchName}</td>
+					<td>${stud.cgpa}</td>
+					<td><fmt:formatDate pattern="dd/MM/yy" value="${stud.dob}" />
+					</td>
+					<td>${stud.studentType}</td>
+					<td>${stud.interestArea}</td>
+					<td>${stud.address.address}, &nbsp;${ stud.address.country.countryName}, &nbsp;${stud.address.city.cityName}</td>
+					<td><a class="text-danger"
+						href="http://localhost:8080/JSPAppWithJavaScript/deletestudent?rollNo=${stud.rollNo}"><i
+							class="fa-regular fa-trash-can"></i></a>&nbsp;<a class="text-warning"
+						href="http://localhost:8080/JSPAppWithJavaScript/updatestudent?rollNo=${stud.rollNo}"><i
+							class="fa-regular fa-pen-to-square"></i></a></td>
 				</tr>
-			</thead>
-			<tbody>
-
-				<c:forEach var="stud" items="${studentList}" varStatus="counter">
-					<tr>
-						<td>${counter.count}</td>
-						<td>${stud.rollNo}</td>
-						<td>${stud.name}</td>
-						<td>${stud.email}</td>
-						<td>${stud.phoneNo}</td>
-						<td>${stud.collegeName}</td>
-						<td>${stud.branch.branchName}</td>
-						<td>${stud.cgpa}</td>
-						<td><fmt:formatDate pattern="dd/MM/yy" value="${stud.dob}" />
-						</td>
-						<td>${stud.studentType}</td>
-						<td>${stud.interestArea}</td>
-						<td>${stud.address.address}&nbsp;${ stud.address.country.countryName}</td>
-						<td><a class="text-danger"
-							href="http://localhost:8080/JSPAppWithJavaScript/deletestudent?rollNo=${stud.rollNo}"><i
-								class="fa-regular fa-trash-can"></i></a>&nbsp;<a
-							class="text-warning"
-							href="http://localhost:8080/JSPAppWithJavaScript/updatestudent?rollNo=${stud.rollNo}"><i
-								class="fa-regular fa-pen-to-square"></i></a></td>
-					</tr>
-				</c:forEach>
-		</table>
+			</c:forEach>
+	</table>
 
 	</div>
 </body>
 
 <script type="text/javascript">
-
-$(function() {
-	$("#student_data").dataTable();
+	$(function() {
+		$("#student_data").dataTable();
 	});
-
 
 	$(document).ready(function() {
 		$(".dp").datepicker({
 			"format" : "yyyy-m-d"/* ,
-								"startDate": "-5m",
-								"endDate": "05-15-2020", */
+											"startDate": "-5m",
+											"endDate": "05-15-2020", */
 		}
 
 		);
@@ -276,6 +314,28 @@ $(function() {
 		});
 
 	}
+
+	function getCities(){
+
+		var sId = $('#stateId').val();
+
+		$.ajax({
+			url : "./getCities",
+			type : "GET",
+			data : {
+				stateId : sId
+			},
+			success : function(result) {
+
+				$("#cityId").html(result);
+			}
+		});
+
+
+
+
+		}
+	
 
 	function validateRegdForm() {
 		var name = $("#nameId").val();
